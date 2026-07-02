@@ -1,0 +1,22 @@
+Remove-NetIPAddress -InterfaceAlias "Ethernet" -Confirm:$false
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 192.168.88.101 -PrefixLength 24 -DefaultGateway 192.168.88.1
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 192.168.88.1
+
+Set-NetConnectionProfile -InterfaceAlias "Ethernet" -NetworkCategory Private
+
+wsl.exe -d Ubuntu -u apollo bash -c "export DISPLAY=:0; cd /mnt/c/Users/apollo/Downloads/Auto_Preflight_Python_W11/Auto_Preflight_Python/ && source ~/myenv/bin/activate && python preflight_integrated2.py; exec bash"
+wsl.exe -d Ubuntu -u apollo bash -c "export DISPLAY=:0; cd /mnt/c/Users/apollo/Downloads/Auto_Preflight_Python_W11/Auto_Preflight_Python/ && source ~/myenv/bin/activate && python firmwaredowngrade.py; exec bash"
+
+sudo apt update && sudo apt install -y x11-apps python3-tk python3-pip python3-venv sshpass
+echo 'export DISPLAY=:0' >> ~/.bashrc && source ~/.bashrc
+
+python3 -m venv myenv
+source myenv/bin/activate
+pip install -r /mnt/c/Users/apollo/Downloads/Auto_Preflight_Python_W11/Auto_Preflight_Python/requirements.txt
+
+sudo apt-get install build-essential autopoint automake autoconf libbsd-dev libssl-dev gettext
+wget http://github.com/haakonnessjoen/MAC-Telnet/tarball/master -O mactelnet.tar.gz
+tar zxvf mactelnet.tar.gz
+cd haakonness*/
+./autogen.sh
+sudo make all install
